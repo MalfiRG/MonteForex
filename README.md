@@ -107,14 +107,6 @@ Here are some common issues and solutions:
 - **Configuration Errors**: Ensure that `config.json` is correctly formatted and contains all required fields.
 - **Dependency Issues**: Verify that all dependencies are installed by running `pip install -r requirements.txt`.
 
-## Contributing Guidelines
-
-We welcome contributions! To report issues or suggest features, please open an issue on our GitHub page.
-
-## License Information
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
 ## Contact Information
 
 For questions or discussions about this project, feel free to reach out via email at [malfiraggraclan@gmail.com](mailto:malfiraggraclan@gmail.com) or open a discussion on our GitHub Discussions page.
