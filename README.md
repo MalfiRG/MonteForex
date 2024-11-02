@@ -13,8 +13,8 @@ Ensure you have the following installed on your system:
 Clone the repository containing the Monte Carlo Trading Simulation script to your local machine.
 
 ```sh
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/MalfiRG/MonteForex.git
+cd MonteForex
 ```
 
 ### 2. Set Up a Virtual Environment (Optional but Recommended)
