@@ -1,7 +1,7 @@
 {
     "starting_balance": 56000,
     "win_rate": 0.5,
-    "average_gain": 600,
+    "average_gain": 390,
     "average_loss": 380,
     "num_simulations": 10000,
     "num_trades": 3000

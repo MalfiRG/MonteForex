@@ -1,4 +1,8 @@
-
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/inspectionProfiles/Project_Default.xml
 /.idea
+/statistics/*
+MonteCarloSimulation.spec
+__main__.log
+/dist/*
+/build/*
