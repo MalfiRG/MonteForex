@@ -1,25 +1,52 @@
-# How to Set Up the Monte Carlo Trading Simulation Script
+# Monte Carlo Trading Simulation Script
+
+## Introduction
+
+This project provides a **Monte Carlo Simulator** for evaluating the profitability of **Forex trading strategies**. By using statistical tools and visualizations, traders can make more informed decisions and adjust their strategies to maximize profitability.
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Detailed Project Description](#detailed-project-description)
+- [Prerequisites](#prerequisites)
+- [Step-by-Step Guide](#step-by-step-guide)
+  - [1. Clone the Repository](#1-clone-the-repository)
+  - [2. Set Up a Virtual Environment (Optional)](#2-set-up-a-virtual-environment-optional)
+  - [3. Install Dependencies](#3-install-dependencies)
+  - [4. Configure the Simulation](#4-configure-the-simulation)
+  - [5. Run the Simulation](#5-run-the-simulation)
+  - [6. View Results](#6-view-results)
+- [Usage Examples](#usage-examples)
+- [Troubleshooting](#troubleshooting)
+- [Contributing Guidelines](#contributing-guidelines)
+- [License Information](#license-information)
+- [Contact Information](#contact-information)
+
+## Detailed Project Description
+
+The **Monte Carlo Trading Simulation Script** allows traders to simulate various trading scenarios and estimate potential outcomes based on different Forex strategies. By adjusting parameters such as starting balance, win rate, average gain, and average loss, users can visualize how these factors impact overall profitability.
 
 ## Prerequisites
 
 Ensure you have the following installed on your system:
-- Python 3.6 or higher
-- `pip` (Python package installer)
+
+- **Python 3.6 or higher**
+- **pip** (Python package installer)
 
 ## Step-by-Step Guide
 
 ### 1. Clone the Repository
 
-Clone the repository containing the Monte Carlo Trading Simulation script to your local machine.
+Clone the repository to your local machine:
 
 ```sh
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/MalfiRG/MonteForex.git
+cd MonteForex
 ```
 
-### 2. Set Up a Virtual Environment (Optional but Recommended)
+### 2. Set Up a Virtual Environment (Optional)
 
-Create and activate a virtual environment to manage dependencies.
+It is recommended to set up a virtual environment to manage dependencies:
 
 ```sh
 python -m venv venv
@@ -28,7 +55,7 @@ source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 
 ### 3. Install Dependencies
 
-Install the required Python packages listed in the `requirements.txt` file.
+Install the required Python packages listed in the `requirements.txt` file:
 
 ```sh
 pip install -r requirements.txt
@@ -36,7 +63,7 @@ pip install -r requirements.txt
 
 ### 4. Configure the Simulation
 
-Edit the `config.json` file to set your desired simulation parameters. The file should look like this:
+Edit the `config.json` file to set your desired simulation parameters. Below is an example configuration:
 
 ```json
 {
@@ -51,7 +78,7 @@ Edit the `config.json` file to set your desired simulation parameters. The file 
 
 ### 5. Run the Simulation
 
-Execute the `MonteCarloSimulation.py` script to run the simulation.
+Run the simulation by executing the script:
 
 ```sh
 python MonteCarloSimulation.py
@@ -59,9 +86,35 @@ python MonteCarloSimulation.py
 
 ### 6. View Results
 
-The script will display statistics and generate plots of the simulation results. Ensure you have a graphical interface available to view the plots.
+The script will display statistics and generate plots of the simulation results. Ensure you have a graphical interface available to view these plots.
+
+## Usage Examples
+
+Here are some example commands and expected outputs when using this project:
+
+```sh
+# Command to run the simulation
+python MonteCarloSimulation.py
+
+# Expected output
+Simulation complete. Results saved to results/output.png.
+```
 
 ## Troubleshooting
 
-- **Configuration Errors**: Ensure the `config.json` file is correctly formatted and all required fields are present.
-- **Dependency Issues**: Verify that all dependencies are installed correctly by checking the output of `pip install -r requirements.txt`.
+Here are some common issues and solutions:
+
+- **Configuration Errors**: Ensure that `config.json` is correctly formatted and contains all required fields.
+- **Dependency Issues**: Verify that all dependencies are installed by running `pip install -r requirements.txt`.
+
+## Contributing Guidelines
+
+We welcome contributions! To report issues or suggest features, please open an issue on our GitHub page.
+
+## License Information
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+## Contact Information
+
+For questions or discussions about this project, feel free to reach out via email at [malfiraggraclan@gmail.com](mailto:malfiraggraclan@gmail.com) or open a discussion on our GitHub Discussions page.
