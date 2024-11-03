@@ -9,6 +9,7 @@ This project provides a **Monte Carlo Simulator** for evaluating the profitabili
 - [Introduction](#introduction)
 - [Detailed Project Description](#detailed-project-description)
 - [Prerequisites](#prerequisites)
+- [Releases](#releases)
 - [Step-by-Step Guide](#step-by-step-guide)
   - [1. Clone the Repository](#1-clone-the-repository)
   - [2. Set Up a Virtual Environment (Optional)](#2-set-up-a-virtual-environment-optional)
@@ -33,6 +34,10 @@ Ensure you have the following installed on your system:
 
 - **Python 3.6 or higher**
 - **pip** (Python package installer)
+
+## Releases
+
+Can be found [here](https://github.com/MalfiRG/MonteForex/releases).
 
 ## Step-by-Step Guide
 
