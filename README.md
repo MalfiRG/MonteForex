@@ -16,6 +16,7 @@ This project provides a **Monte Carlo Simulator** for evaluating the profitabili
   - [4. Configure the Simulation](#4-configure-the-simulation)
   - [5. Run the Simulation](#5-run-the-simulation)
   - [6. View Results](#6-view-results)
+  - [7. Compile to Executable](#7-compile-to-executable)
 - [Usage Examples](#usage-examples)
 - [Troubleshooting](#troubleshooting)
 - [Contributing Guidelines](#contributing-guidelines)
@@ -86,7 +87,54 @@ python MonteCarloSimulation.py
 
 ### 6. View Results
 
-The script will display statistics and generate plots of the simulation results. Ensure you have a graphical interface available to view these plots.
+The script will display statistics and generate plots of the simulation results. The results are saved in the 'statistics' directory. Each run produces a folder in the format YYYY-MM-DD_HH-MM-SS containing the following files:
+1. statistics.md
+2. Figures:
+    - ending_balances_cfd.png
+    - ending_balances_density.png
+    - ending_balances_histogram.png
+    - sample_paths.png
+
+### 7. Compile to Executable
+
+To compile the script into an executable using PyInstaller, follow these steps:
+1. Install PyInstaller:
+```sh
+pip install pyinstaller
+```
+
+2. Compile the script:
+```sh
+pyinstaller --onefile MonteCarloSimulation.py
+```
+
+**WARNING**: Some antivirus engines might flag the executable as a false positive. To avoid this:
+##### 1. Use a Locally Compiled Bootloader
+You can try compiling PyInstaller from source to create a custom bootloader, which may help avoid detection:
+
+Clone the PyInstaller repository:
+
+```shell
+git clone https://github.com/pyinstaller/pyinstaller.git
+cd pyinstaller/bootloader
+```
+
+Build the bootloader:
+
+```sh
+python ./waf all
+```
+
+Use this custom-built version of PyInstaller to generate your executable.
+This method reduces the likelihood of your executable being flagged since the bootloader will be unique and not widely recognized by antivirus software.
+
+##### 2. Digitally Sign Your Executable
+You can obtain a code-signing certificate from a Certificate Authority (CA) to sign your executable. This will help establish trust and reduce the likelihood of false positives.
+##### 3. Submit the Executable for Whitelisting
+If your executable is being flagged by antivirus software, you can submit it to the respective antivirus vendor for whitelisting. 
+##### 4. Whitelist the File Locally
+Self-explanatory, you can whitelist the file in your antivirus software.
+
 
 ## Usage Examples
 

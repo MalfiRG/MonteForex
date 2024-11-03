@@ -1,4 +1,5 @@
 import traceback
+from functools import wraps
 from pathlib import Path
 from datetime import datetime
 import numpy as np
@@ -8,13 +9,27 @@ import json
 from typing import List, Dict, Tuple
 import sys
 from Logger import Logger
-# Constants
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+import time
+
 DEFAULT_CONFIG_PATH = 'config.json'
 NUM_SAMPLE_PATHS = 20
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
-# Set a consistent theme for plots
 sns.set_theme(style='whitegrid')
+
+
+def measure_time(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        exec_time = end_time - start_time
+        args[0].logger.info(f"Execution time for {func.__name__}: {exec_time:.4f} seconds")
+        return result
+
+    return wrapper
 
 
 class ConfigurationError(Exception):
@@ -67,6 +82,7 @@ class MonteCarloTradingSimulation:
         self.num_simulations = num_simulations
         self.num_trades = num_trades
         self.ending_balances = np.zeros(self.num_simulations)
+        self.median_ending_balance = 0
         self.sample_paths = np.zeros((NUM_SAMPLE_PATHS, self.num_trades + 1))
         self.max_drawdowns = np.zeros(self.num_simulations)
         self.max_wins_in_a_row = np.zeros(self.num_simulations)
@@ -153,9 +169,10 @@ class MonteCarloTradingSimulation:
 
         return str(results_dir), str(figures_dir)
 
+    @measure_time
     def _calculate_max_streak(self, outcomes: np.ndarray, win: bool) -> np.ndarray:
         """
-        Calculate the maximum consecutive wins or losses from the outcomes.
+        Calculate the maximum consecutive wins or losses from the outcomes in parallel.
 
         Args:
             outcomes (np.ndarray): A boolean array of trade outcomes.
@@ -165,7 +182,8 @@ class MonteCarloTradingSimulation:
             np.ndarray: The maximum consecutive wins or losses.
         """
         streaks = np.where(outcomes, 1, 0) if win else np.where(~outcomes, 1, 0)
-        max_streaks = np.array([self._max_consecutive(x) for x in streaks])
+        with ProcessPoolExecutor() as executor:
+            max_streaks = np.array(list(executor.map(self._max_consecutive, streaks)))
         return max_streaks
 
     @staticmethod
@@ -191,6 +209,7 @@ class MonteCarloTradingSimulation:
         try:
             self.logger.info("Calculating statistics.")
             mean_balance = np.mean(self.ending_balances)
+            self.median_ending_balance = np.median(self.ending_balances)
             std_dev_balance = np.std(self.ending_balances)
             min_balance = np.min(self.ending_balances)
             max_balance = np.max(self.ending_balances)
@@ -209,14 +228,21 @@ class MonteCarloTradingSimulation:
             avg_max_drawdown = np.mean(self.max_drawdowns)
             avg_max_wins_in_a_row = np.mean(self.max_wins_in_a_row)
             avg_max_losses_in_a_row = np.mean(self.max_losses_in_a_row)
+
+            # gain-to-pain ratio
+            gains = self.ending_balances[self.ending_balances > self.starting_balance] - self.starting_balance
+            losses = self.starting_balance - self.ending_balances[self.ending_balances < self.starting_balance]
+            gain_to_pain_ratio = np.sum(gains) / np.sum(losses) if np.sum(losses) != 0 else np.inf
+
             self.logger.info("Statistics calculated.")
 
             stats_file_path = Path(self.results_dir) / "statistics.md"
-            self.logger.info(f"Writing statistics to {stats_file_path}.")
+            self.logger.info(f"Writing statistics to \"{stats_file_path}\".")
 
             with open(stats_file_path, 'w') as f:
                 f.write(f"## Monte Carlo Simulation Results:\n\n")
                 f.write(f"- Mean Ending Balance: ${mean_balance:,.2f}\n")
+                f.write(f"- Median Ending Balance: ${self.median_ending_balance:,.2f}\n")
                 f.write(f"- Standard Deviation of Ending Balance: ${std_dev_balance:,.2f}\n")
                 f.write(f"- Minimum Ending Balance: ${min_balance:,.2f}\n")
                 f.write(f"- Maximum Ending Balance: ${max_balance:,.2f}\n")
@@ -229,11 +255,11 @@ class MonteCarloTradingSimulation:
                 f.write(f"- Conditional Value at Risk (5%): ${cvar_95:,.2f}\n")
                 f.write(f"- Annualized Sharpe Ratio: {sharpe_ratio:.2f}\n")
                 f.write(f"- Annualized Sortino Ratio: {sortino_ratio:.2f}\n")
-
+                f.write(f"- Gain-to-Pain Ratio: {gain_to_pain_ratio:.2f}\n")
 
                 f.write("Statistics calculation completed.\n")
 
-            self.logger.info("Statistics calculation completed.")
+            self.logger.info(f"Statistics calculation completed. Results saved to \"{stats_file_path}\".")
         except Exception as e:
             self.logger.error(f"An error occurred during statistics calculation: {e}")
             raise
@@ -267,7 +293,7 @@ class MonteCarloTradingSimulation:
         self.logger.info("Saving histogram to figures directory.")
         plt.savefig(Path(self.figures_dir) / "ending_balances_histogram.png")
         plt.close()
-        self.logger.info("Histogram plot saved.")
+        self.logger.info(f"\"ending_balances_histogram\" plot saved to \"{self.figures_dir}\".")
 
     def _plot_density(self) -> None:
         """
@@ -286,7 +312,7 @@ class MonteCarloTradingSimulation:
         self.logger.info("Saving density plot to figures directory.")
         plt.savefig(Path(self.figures_dir) / "ending_balances_density.png")
         plt.close()
-        self.logger.info("Density plot saved.")
+        self.logger.info(f"\"ending_balances_density\" plot saved to \"{self.figures_dir}\".")
 
     def _plot_sample_paths(self) -> None:
         """
@@ -304,7 +330,7 @@ class MonteCarloTradingSimulation:
         self.logger.info("Saving sample paths plot to figures directory.")
         plt.savefig(Path(self.figures_dir) / "sample_paths.png")
         plt.close()
-        self.logger.info("Sample paths plot saved.")
+        self.logger.info(f"\"Sample_paths\" plot saved to \"{self.figures_dir}\".")
 
     def _plot_cdf(self) -> None:
         """
@@ -322,7 +348,7 @@ class MonteCarloTradingSimulation:
         self.logger.info("Saving CDF plot to figures directory.")
         plt.savefig(Path(self.figures_dir) / "ending_balances_cdf.png")
         plt.close()
-        self.logger.info("CDF plot saved.")
+        self.logger.info(f"\"ending_balances_cdf\" plot saved to \"{self.figures_dir}\".")
 
 
 def load_configuration(config_path: str, logger) -> Dict:
@@ -339,6 +365,7 @@ def load_configuration(config_path: str, logger) -> Dict:
 
     Raises:
         ConfigurationError: If the configuration file is missing or invalid.
+        json.JSONDecodeError: If the JSON file cannot be decoded.
 
     """
     try:
@@ -380,6 +407,22 @@ def main(config_path: str = DEFAULT_CONFIG_PATH):
         logger.info("Simulation completed successfully.")
     except ConfigurationError as ce:
         logger.critical(f"Configuration Error: {ce}")
+        logger.critical(traceback.format_exc())
+        sys.exit(1)
+    except ValueError as ve:
+        logger.critical(f"Value Error: {ve}")
+        logger.critical(traceback.format_exc())
+        sys.exit(1)
+    except FileNotFoundError as fnfe:
+        logger.critical(f"File Not Found Error: {fnfe}")
+        logger.critical(traceback.format_exc())
+        sys.exit(1)
+    except KeyError as ke:
+        logger.critical(f"Key Error: {ke}")
+        logger.critical(traceback.format_exc())
+        sys.exit(1)
+    except TypeError as te:
+        logger.critical(f"Type Error: {te}")
         logger.critical(traceback.format_exc())
         sys.exit(1)
     except Exception as e:
