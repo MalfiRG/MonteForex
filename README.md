@@ -135,16 +135,18 @@ If your executable is being flagged by antivirus software, you can submit it to 
 ##### 4. Whitelist the File Locally
 Self-explanatory, you can whitelist the file in your antivirus software.
 
+### 8. Place config file in the same directory as the executable
+
+It is important to place the config file in the same directory as the executable. This is because the executable will look for the config file in the same directory as the executable.
+**Otherwise, the executable will not be able to find the config file and will not run.**
 
 ## Usage Examples
 
 Here are some example commands and expected outputs when using this project:
 
 ```sh
-# Command to run the simulation
 python MonteCarloSimulation.py
 
-# Expected output
 Simulation complete. Results saved to results/output.png.
 ```
 
